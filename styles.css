@@ -90,4 +90,7 @@ button:hover {
     background-color: #444;
     padding: 20px;
     border-radius: 10px;
+    width: 38%; /* Ajusta el ancho a la mitad del contenedor */
+    margin: 20px auto; /* Centra el componente horizontalmente */
 }
+
