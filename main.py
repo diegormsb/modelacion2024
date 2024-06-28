@@ -34,12 +34,6 @@ vuelos = [
 for vuelo in vuelos:
     grafo.agregar_arista(vuelo[0], vuelo[1], vuelo[2])
 
-def obtener_datos_usuario():
-    origen = input("Ingrese el código del aeropuerto de origen: ").upper()
-    destino = input("Ingrese el código del aeropuerto de destino: ").upper()
-    visa = input("¿Tiene visa? (si/no): ").lower() == 'si'
-    return origen, destino, visa
-
 import heapq
 
 def dijkstra(grafo, inicio, destino, visa, requerimientos_visa):
@@ -108,28 +102,3 @@ def bfs(grafo, inicio, destino, visa, requerimientos_visa):
             cola.append((vecino, camino + [vecino]))
     
     return None  # No se encontró una ruta
-
-def main():
-    origen, destino, visa = obtener_datos_usuario()
-
-    if origen not in grafo.vertices or destino not in grafo.vertices:
-        print("Aeropuerto de origen o destino no válido.")
-        return
-
-    opcion = input("¿Desea la ruta más barata o la de menos escalas? (barata/escalas): ").lower()
-
-    if opcion == 'barata':
-        ruta, costo = dijkstra(grafo, origen, destino, visa, requerimientos_visa)
-        if ruta:
-            print(f"Ruta más barata: {' -> '.join(ruta)} con un costo de ${costo}")
-        else:
-            print("No se encontró una ruta disponible sin visa.")
-    else:
-        ruta = bfs(grafo, origen, destino, visa, requerimientos_visa)
-        if ruta:
-            print(f"Ruta con menos escalas: {' -> '.join(ruta)}")
-        else:
-            print("No se encontró una ruta disponible sin visa.")
-
-if __name__ == "__main__":
-    main()

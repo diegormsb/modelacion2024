@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetroTravel2024 - Información de Vuelo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="flight-info">
+        <div class="header">
+            <img src="images/airplane.png" alt="Icono de Avión" class="icon">
+            <h1>Información de Vuelo</h1>
+        </div>
+        <div class="details">
+            <div class="detail">
+                <span class="label">Aerolínea</span>
+                <span class="value" id="airline">UWU</span>
+            </div>
+            <div class="detail">
+                <span class="label">Pasajero</span>
+                <span class="value" id="passenger" contenteditable="true">Josh</span>
+            </div>
+            <div class="detail">
+                <span class="label">Origen</span>
+                <span class="value" id="origin">---</span>
+            </div>
+            <div class="detail">
+                <span class="label">Destino</span>
+                <span class="value" id="destination">---</span>
+            </div>
+        </div>
+        <form id="flightForm">
+            <div class="form-group">
+                <label for="visa">¿Tiene visa?</label>
+                <select id="visa" name="visa" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                    <option value="si">Sí</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="origen">Aeropuerto de Origen</label>
+                <select id="origen" name="origen" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="destino">Aeropuerto de Destino</label>
+                <select id="destino" name="destino" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="preferencia">Preferencia de Ruta</label>
+                <select id="preferencia" name="preferencia" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                    <option value="barata">Ruta más barata</option>
+                    <option value="escalas">Menos escalas</option>
+                </select>
+            </div>
+            <button type="submit">Buscar Ruta</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

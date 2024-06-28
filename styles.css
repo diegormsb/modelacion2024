@@ -1,0 +1,93 @@
+body {
+    background-color: #333;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.flight-info {
+    text-align: center;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header .icon {
+    width: 50px;
+    margin-right: 10px;
+}
+
+.details {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    background-color: #444;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.detail {
+    margin: 0 20px;
+    text-align: left;
+}
+
+.label {
+    display: block;
+    font-weight: bold;
+}
+
+.value {
+    display: block;
+    margin-top: 5px;
+    font-size: 1.2em;
+    color: #f0a500;
+}
+
+.form-group {
+    margin: 15px 0;
+    text-align: left;
+    display: inline-block;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+select, button {
+    padding: 10px;
+    font-size: 1em;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+    width: 100%;
+}
+
+button {
+    background-color: #f0a500;
+    color: #333;
+    cursor: pointer;
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+button:hover {
+    background-color: #d08b00;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #fff;
+    background-color: #444;
+    padding: 20px;
+    border-radius: 10px;
+}
