@@ -34,6 +34,31 @@ vuelos = [
 for vuelo in vuelos:
     grafo.agregar_arista(vuelo[0], vuelo[1], vuelo[2])
 
+def obtener_datos_usuario():
+    while True:
+        origen = input("Ingrese el código del aeropuerto de origen: ").upper()
+        if origen in grafo.vertices:
+            break
+        else:
+            print("Código de aeropuerto de origen no válido. Intente nuevamente.")
+    
+    while True:
+        destino = input("Ingrese el código del aeropuerto de destino: ").upper()
+        if destino in grafo.vertices:
+            break
+        else:
+            print("Código de aeropuerto de destino no válido. Intente nuevamente.")
+    
+    while True:
+        visa_input = input("¿Tiene visa? (si/no): ").lower()
+        if visa_input in ['si', 'no']:
+            visa = visa_input == 'si'
+            break
+        else:
+            print("Respuesta no válida. Por favor, responda con 'si' o 'no'.")
+    
+    return origen, destino, visa
+
 import heapq
 
 def dijkstra(grafo, inicio, destino, visa, requerimientos_visa):
@@ -102,3 +127,39 @@ def bfs(grafo, inicio, destino, visa, requerimientos_visa):
             cola.append((vecino, camino + [vecino]))
     
     return None  # No se encontró una ruta
+
+def main():
+    while True:
+        origen, destino, visa = obtener_datos_usuario()
+
+        if origen not in grafo.vertices or destino not in grafo.vertices:
+            print("Aeropuerto de origen o destino no válido.")
+            continue
+
+        while True:
+            opcion = input("¿Desea la ruta más barata o la de menos escalas? (barata/escalas): ").lower()
+            if opcion in ['barata', 'escalas']:
+                break
+            else:
+                print("Respuesta no válida. Por favor, responda con 'barata' o 'escalas'.")
+
+        if opcion == 'barata':
+            ruta, costo = dijkstra(grafo, origen, destino, visa, requerimientos_visa)
+            if ruta:
+                print(f"Ruta más barata: {' -> '.join(ruta)} con un costo de ${costo}")
+            else:
+                print("No se encontró una ruta disponible sin visa.")
+        else:
+            ruta = bfs(grafo, origen, destino, visa, requerimientos_visa)
+            if ruta:
+                print(f"Ruta con menos escalas: {' -> '.join(ruta)}")
+            else:
+                print("No se encontró una ruta disponible sin visa.")
+        
+        otra_consulta = input("¿Desea realizar otra consulta? (si/no): ").lower()
+        if otra_consulta != 'si':
+            print("Gracias por usar MetroTravel2024.")
+            break
+
+if __name__ == "__main__":
+    main()
