@@ -1,0 +1,139 @@
+from flask import Flask, request, jsonify, render_template
+from collections import deque
+
+app = Flask(__name__)
+
+class Grafo:
+    def __init__(self):
+        self.vertices = {}
+
+    def agregar_vertice(self, vertice):
+        if vertice not in self.vertices:
+            self.vertices[vertice] = {}
+
+    def agregar_arista(self, origen, destino, peso):
+        if origen in self.vertices and destino in self.vertices:
+            self.vertices[origen][destino] = peso
+            self.vertices[destino][origen] = peso  # El grafo es no dirigido
+
+# Inicialización del grafo
+grafo = Grafo()
+
+# Lista de aeropuertos
+aeropuertos = ["CCS", "AUA", "BON", "CUR", "SXM", "SDQ", "SBH", "POS", "BGI", "FDF", "PTP"]
+
+# Agregar vertices
+for aeropuerto in aeropuertos:
+    grafo.agregar_vertice(aeropuerto)
+
+# Agregar aristas con sus tarifas
+vuelos = [
+    ("CCS", "AUA", 40), ("CCS", "CUR", 35), ("CCS", "BON", 60), ("CCS", "SXM", 300),
+    ("AUA", "CUR", 15), ("AUA", "BON", 15), ("CUR", "BON", 15), ("CCS", "SDQ", 180),
+    ("SDQ", "SXM", 50), ("SXM", "SBH", 45), ("CCS", "POS", 150), ("CCS", "BGI", 180),
+    ("POS", "BGI", 35), ("POS", "SXM", 90), ("BGI", "SXM", 70), ("POS", "PTP", 80),
+    ("POS", "FDF", 75), ("PTP", "SXM", 100), ("PTP", "SBH", 80), ("CUR", "SXM", 80),
+    ("AUA", "SXM", 85)
+]
+
+for vuelo in vuelos:
+    grafo.agregar_arista(vuelo[0], vuelo[1], vuelo[2])
+
+requerimientos_visa = {
+    "CCS": False, "AUA": True, "BON": True, "CUR": True, "SXM": True,
+    "SDQ": True, "SBH": False, "POS": False, "BGI": False, "FDF": False, "PTP": False
+}
+
+def dijkstra(grafo, inicio, destino, visa, requerimientos_visa):
+    distancias = {vertice: float('infinity') for vertice in grafo.vertices}
+    distancias[inicio] = 0
+    predecesores = {vertice: None for vertice in grafo.vertices}
+    visitados = set()
+
+    while len(visitados) < len(grafo.vertices):
+        vertice_actual = None
+        distancia_minima = float('infinity')
+
+        for vertice in distancias:
+            if vertice not in visitados and distancias[vertice] < distancia_minima:
+                vertice_actual = vertice
+                distancia_minima = distancias[vertice]
+
+        if vertice_actual is None:
+            break
+
+        visitados.add(vertice_actual)
+
+        for vecino, peso in grafo.vertices[vertice_actual].items():
+            if not visa and requerimientos_visa[vecino]:
+                continue
+
+            nueva_distancia = distancias[vertice_actual] + peso
+
+            if nueva_distancia < distancias[vecino]:
+                distancias[vecino] = nueva_distancia
+                predecesores[vecino] = vertice_actual
+
+    ruta = []
+    paso = destino
+    if distancias[paso] == float('infinity'):
+        return None, float('infinity')
+    while paso:
+        ruta.append(paso)
+        paso = predecesores[paso]
+    ruta.reverse()
+
+    return ruta, distancias[destino]
+
+
+def bfs(grafo, inicio, destino, visa, requerimientos_visa):
+    visitados = set()
+    cola = deque([(inicio, [inicio])])
+
+    while cola:
+        (vertice_actual, camino) = cola.popleft()
+
+        if vertice_actual in visitados:
+            continue
+
+        visitados.add(vertice_actual)
+
+        for vecino in grafo.vertices[vertice_actual]:
+            if not visa and requerimientos_visa[vecino]:
+                continue
+
+            if vecino == destino:
+                return camino + [vecino]
+
+            cola.append((vecino, camino + [vecino]))
+
+    return None
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/ruta', methods=['GET'])
+def obtener_ruta():
+    origen = request.args.get('origen')
+    destino = request.args.get('destino')
+    visa = request.args.get('visa').lower() == 'true'
+    preferencia = request.args.get('preferencia')
+
+    if preferencia == 'barata':
+        ruta, costo = dijkstra(grafo, origen, destino, visa, requerimientos_visa)
+        if ruta:
+            return jsonify({'result': f"Ruta más barata: {' -> '.join(ruta)} con un costo de ${costo}"})
+        else:
+            return jsonify({'error': 'No se encontró una ruta disponible sin visa.'})
+    elif preferencia == 'escalas':
+        ruta = bfs(grafo, origen, destino, visa, requerimientos_visa)
+        if ruta:
+            return jsonify({'result': f"Ruta con menos escalas: {' -> '.join(ruta)}"})
+        else:
+            return jsonify({'error': 'No se encontró una ruta disponible sin visa.'})
+    else:
+        return jsonify({'error': 'Preferencia de ruta no válida.'})
+
+if __name__ == '__main__':
+    app.run(debug=True, port=8000)

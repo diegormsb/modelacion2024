@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from urllib.parse import urlparse, parse_qs
-from main import Grafo, dijkstra, bfs, requerimientos_visa
+from app import *
 
 class RequestHandler(BaseHTTPRequestHandler):
     def _set_response(self):
@@ -45,22 +45,3 @@ def run(server_class=HTTPServer, handler_class=RequestHandler, port=8000):
     httpd = server_class(server_address, handler_class)
     print(f'Starting server on port {port}...')
     httpd.serve_forever()
-
-if __name__ == '__main__':
-    grafo = Grafo()
-    aeropuertos = ["CCS", "AUA", "BON", "CUR", "SXM", "SDQ", "SBH", "POS", "BGI", "FDF", "PTP"]
-    for aeropuerto in aeropuertos:
-        grafo.agregar_vertice(aeropuerto)
-
-    vuelos = [
-        ("CCS", "AUA", 40), ("CCS", "CUR", 35), ("CCS", "BON", 60), ("CCS", "SXM", 300),
-        ("AUA", "CUR", 15), ("AUA", "BON", 15), ("CUR", "BON", 15), ("CCS", "SDQ", 180),
-        ("SDQ", "SXM", 50), ("SXM", "SBH", 45), ("CCS", "POS", 150), ("CCS", "BGI", 180),
-        ("POS", "BGI", 35), ("POS", "SXM", 90), ("BGI", "SXM", 70), ("POS", "PTP", 80),
-        ("POS", "FDF", 75), ("PTP", "SXM", 100), ("PTP", "SBH", 80), ("CUR", "SXM", 80),
-        ("AUA", "SXM", 85)
-    ]
-    for vuelo in vuelos:
-        grafo.agregar_arista(vuelo[0], vuelo[1], vuelo[2])
-
-    run()

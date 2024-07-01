@@ -93,9 +93,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const visa = visaSelect.value === "si";
         const preferencia = document.getElementById("preferencia").value;
 
-        fetch(`http://localhost:8000/?origen=${origen}&destino=${destino}&visa=${visa}&preferencia=${preferencia}`)
-            .then(response => response.json())
+        // Realizar la solicitud al backend Flask
+        fetch(`/ruta?origen=${origen}&destino=${destino}&visa=${visa}&preferencia=${preferencia}`)
+            .then(response => response.json())  // Parsear la respuesta como JSON
             .then(data => {
+                // Actualizar los elementos HTML con la respuesta del servidor
                 document.getElementById("result").textContent = data.result || data.error;
                 document.getElementById("airline").textContent = "UWU";
                 document.getElementById("origin").textContent = origen;
@@ -103,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 document.getElementById("passenger").textContent = document.getElementById("passenger").textContent;
             })
             .catch(error => {
+                // Manejar errores de la solicitud
                 document.getElementById("result").textContent = "Ocurrió un error: " + error;
             });
     });
