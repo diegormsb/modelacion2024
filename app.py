@@ -45,69 +45,98 @@ requerimientos_visa = {
 }
 
 def dijkstra(grafo, inicio, destino, visa, requerimientos_visa):
+    # Inicializar las distancias de todos los nodos como infinitas, excepto el nodo de inicio que es 0
     distancias = {vertice: float('infinity') for vertice in grafo.vertices}
     distancias[inicio] = 0
+    
+    # Inicializar predecesores de todos los nodos como None
     predecesores = {vertice: None for vertice in grafo.vertices}
+    
+    # Conjunto para guardar los nodos que ya han sido visitados
     visitados = set()
 
+    # Bucle principal hasta que todos los nodos hayan sido visitados
     while len(visitados) < len(grafo.vertices):
         vertice_actual = None
         distancia_minima = float('infinity')
 
+        # Encontrar el nodo no visitado con la distancia más corta
         for vertice in distancias:
             if vertice not in visitados and distancias[vertice] < distancia_minima:
                 vertice_actual = vertice
                 distancia_minima = distancias[vertice]
 
+        # Si no hay un nodo accesible no visitado, salir del bucle
         if vertice_actual is None:
             break
 
+        # Marcar el nodo actual como visitado
         visitados.add(vertice_actual)
 
+        # Explorar los vecinos del nodo actual
         for vecino, peso in grafo.vertices[vertice_actual].items():
+            # Si el vecino requiere visa y el usuario no tiene visa, saltar este vecino
             if not visa and requerimientos_visa[vecino]:
                 continue
 
+            # Calcular la nueva distancia al vecino
             nueva_distancia = distancias[vertice_actual] + peso
 
+            # Si la nueva distancia es menor, actualizar la distancia y el predecesor
             if nueva_distancia < distancias[vecino]:
                 distancias[vecino] = nueva_distancia
                 predecesores[vecino] = vertice_actual
 
+    # Reconstruir el camino desde el destino al origen
     ruta = []
     paso = destino
     if distancias[paso] == float('infinity'):
+        # Si la distancia al destino es infinita, no hay camino disponible
         return None, float('infinity')
     while paso:
         ruta.append(paso)
         paso = predecesores[paso]
-    ruta.reverse()
+    ruta.reverse()  # Invertir la ruta para obtener la secuencia correcta
 
+    # Devolver la ruta más corta y su costo total
     return ruta, distancias[destino]
 
 
 def bfs(grafo, inicio, destino, visa, requerimientos_visa):
+    # Conjunto para guardar los nodos que ya han sido visitados
     visitados = set()
+    
+    # Cola para gestionar los nodos a explorar, cada elemento es una tupla (nodo, camino hasta ese nodo)
     cola = deque([(inicio, [inicio])])
 
+    # Bucle principal hasta que la cola esté vacía
     while cola:
+        # Extraer el primer elemento de la cola
         (vertice_actual, camino) = cola.popleft()
 
+        # Si el nodo actual ya ha sido visitado, continuar con el siguiente
         if vertice_actual in visitados:
             continue
 
+        # Marcar el nodo actual como visitado
         visitados.add(vertice_actual)
 
+        # Explorar los vecinos del nodo actual
         for vecino in grafo.vertices[vertice_actual]:
+            # Si el vecino requiere visa y el usuario no tiene visa, saltar este vecino
             if not visa and requerimientos_visa[vecino]:
                 continue
 
+            # Si el vecino es el destino, devolver el camino actual más el vecino
             if vecino == destino:
                 return camino + [vecino]
 
+            # De lo contrario, añadir el vecino a la cola con el camino actualizado
             cola.append((vecino, camino + [vecino]))
 
+    # Si no se encuentra el destino, devolver None
     return None
+
 
 @app.route('/')
 def index():
